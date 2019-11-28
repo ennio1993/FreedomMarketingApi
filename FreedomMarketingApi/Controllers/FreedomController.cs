@@ -20,32 +20,29 @@ namespace FreedomMarketingApi.Controllers
     public class FreedomController : ControllerBase
     {
         private readonly IConfiguration _config;
-        private readonly HttpClient _httprequest;
         private readonly string _token;
-        private readonly string _authHeader;
 
         public FreedomController(IConfiguration configuration)
         {
             _config = configuration;
 
-            //var request = 
-            //_authHeader = _httprequest.Headers["Authorization"];
+            var accessToken = Request.Headers["Authorization"].ToString();
 
-            //if (_authHeader != null)
-            //{
-            //    if (_authHeader.StartsWith("Bearer ") || _authHeader.Contains("Bearer "))
-            //    {
-            //        _token = _authHeader.Substring("Bearer ".Length).Trim();
-            //    }
-            //    else
-            //    {
-            //        throw new UnauthorizedAccessException("Invalid Token");
-            //    }
-            //}
-            //else
-            //{
-            //    throw new UnauthorizedAccessException("Invalid Token");
-            //}
+            if (accessToken != null)
+            {
+                if (accessToken.StartsWith("Bearer ") || accessToken.Contains("Bearer "))
+                {
+                    _token = accessToken.Substring("Bearer ".Length).Trim();
+                }
+                else
+                {
+                    throw new UnauthorizedAccessException("Invalid Token");
+                }
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("Invalid Token");
+            }
         }    
 
         #region Roles
