@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FreedomMarketingApi.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,17 +17,20 @@ using static FreedomMarketingApi.Models.DataModel;
 namespace FreedomMarketingApi.Controllers
 {
     //[Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class FreedomController : ControllerBase
     {
         private readonly IConfiguration _config;
+        private readonly IHttpContextAccessor _httpContext;
         private readonly string _token;
 
-        public FreedomController(IConfiguration configuration)
+        public FreedomController(IConfiguration configuration, IHttpContextAccessor accessor)
         {
             _config = configuration;
+            _httpContext = accessor;
 
-            var accessToken = Request.Headers["Authorization"].ToString();
+            var accessToken = _httpContext.HttpContext.Request.Headers["Authorization"].ToString();
 
             if (accessToken != null)
             {
