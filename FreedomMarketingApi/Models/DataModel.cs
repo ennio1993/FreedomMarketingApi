@@ -12,32 +12,32 @@ namespace FreedomMarketingApi.Models
         {
             [Key]
             public int idRoles { get; set; }
-            public string Descripcion { get; set; }
-            public string FechaCreacion { get; set; }
-            public string CodigoRol { get; set; }
+            public string Description { get; set; }
+            public string CreateDate { get; set; }
+            public string RoleCode { get; set; }
         }
-        public class Usuarios
+        public class Users
         {
             [Key]
-            public int idUsuarios { get; set; }
-            public string CodigoUsuario { get; set; }
-            public string PrimerNombre { get; set; }
-            public string SegundoNombre { get; set; }
-            public string PrimerApellido { get; set; }
-            public string SegundoApellido { get; set; }
-            public string Identificacion { get; set; }
-            public string CorreoElectronico { get; set; }
-            public string Telefono { get; set; }
-            public string Direccion { get; set; }
-            public string Pais { get; set; }
-            public string CodigoReferencia { get; set; }
-            public int Puntos { get; set; }
-            public string CodigoRol { get; set; }
-            public bool Estado { get; set; }
-            public string CuentadePago { get; set; }
-            public string FechaCreacion { get; set; }
-            public string Contraseña { get; set; }
-            public bool CorreoMasivo { get; set; }
+            public int idUsers { get; set; }
+            public string UserCode { get; set; }
+            public string FirstName { get; set; }
+            public string SecondName { get; set; }
+            public string FirstLastName { get; set; }
+            public string SecondLastName { get; set; }
+            public string Identification { get; set; }
+            public string Email { get; set; }
+            public string Telephone { get; set; }
+            public string Address { get; set; }
+            public string Country { get; set; }
+            public string ReferenceCode { get; set; }
+            public int Points { get; set; }
+            public string RoleCode { get; set; }
+            public bool Status { get; set; }
+            public string PaymentAccount { get; set; }
+            public string CreateDate { get; set; }
+            public string Password { get; set; }
+            public bool MassiveMail { get; set; }
         }
         public class ResponseModel
         {
@@ -46,9 +46,9 @@ namespace FreedomMarketingApi.Models
         }
         public class LoginResponse
         {
-            public string CorreoElectronico { get; set; }
-            public string NombreCompleto { get; set; }
-            public string Rol { get; set; }
+            public string Email { get; set; }
+            public string FullName { get; set; }
+            public string Role { get; set; }
         }
         public class LoginViewModel
         {

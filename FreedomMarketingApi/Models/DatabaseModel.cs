@@ -20,7 +20,7 @@ namespace FreedomMarketingApi.Models
                 optionsBuilder.UseMySql("server=167.172.248.79;port=3306;database=thefreedommarketing_dev;uid=ennio;password=Bq$%Em=Y8L&5TDNH");
             }
             public DbSet<Roles> Roles { get; set; }
-            public DbSet<Usuarios> Usuarios { get; set; }
+            public DbSet<Users> Users { get; set; }
         }
     }
 }

@@ -23,7 +23,7 @@ namespace FreedomMarketingApi.Controllers
 
         [Route("wslogin")]
         [HttpPost]
-        public async Task<IActionResult> Login(Usuarios model)
+        public async Task<IActionResult> Login(Users model)
         {
             MySqlContext db = new MySqlContext();
             ResponseModel objresult = new ResponseModel();
@@ -32,8 +32,8 @@ namespace FreedomMarketingApi.Controllers
 
             try
             {
-                Usuarios results = (from x in db.Usuarios
-                                    where x.CorreoElectronico == model.CorreoElectronico && x.Contraseña == model.Contraseña
+                var results = (from x in db.Users
+                                    where x.Email == model.Email && x.Password == model.Password
                                     select x).FirstOrDefault();
 
                 if (results == null)
@@ -44,16 +44,16 @@ namespace FreedomMarketingApi.Controllers
                     return BadRequest(objresult);
                 }
 
-                login.CorreoElectronico = results.CorreoElectronico;
-                login.NombreCompleto = results.PrimerNombre + " " + results.PrimerApellido;
+                login.Email = results.Email;
+                login.FullName = results.FirstName + " " + results.FirstLastName;
 
                 var codigo = (from x in db.Roles
-                              where x.CodigoRol == results.CodigoRol
-                              select x.Descripcion).FirstOrDefault();
+                              where x.RoleCode == results.RoleCode
+                              select x.Description).FirstOrDefault();
 
-                login.Rol = codigo;
+                login.Role = codigo;
 
-                objresult.FreedomResponse = new { serviceResponse = true, Data = login, token = jwt.GenerateCode(login.CorreoElectronico, login.Rol, login.NombreCompleto) };
+                objresult.FreedomResponse = new { serviceResponse = true, Data = login, token = jwt.GenerateCode(login.Email, login.Role, login.FullName) };
                 objresult.HttpResponse = new { code = 200, message = "Ok" };
 
                 return Ok(objresult);

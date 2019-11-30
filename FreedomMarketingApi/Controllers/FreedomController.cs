@@ -60,21 +60,21 @@ namespace FreedomMarketingApi.Controllers
             {
                 MySqlContext db = new MySqlContext();
 
-                model.CodigoRol = Guid.NewGuid().ToString();
-                model.FechaCreacion = DateTime.UtcNow.AddHours(-5).ToString();
+                model.RoleCode = Guid.NewGuid().ToString();
+                model.CreateDate = DateTime.UtcNow.AddHours(-5).ToString();
 
                 db.Roles.Add(model);
                 db.SaveChanges();
 
-                objresult.FreedomResponse = new { serviceResponse = true };
+                objresult.FreedomResponse = new { serviceResponse = true, Role = model };
                 objresult.HttpResponse = new { code = 200, message = "Ok" };
 
                 return Ok(objresult);
             }
             catch (Exception e)
             {
-                objresult.FreedomResponse = new { serviceResponse = false };
-                objresult.HttpResponse = new { code = 404, message = e.Message };
+                objresult.FreedomResponse = new { serviceResponse = false, Role = "" };
+                objresult.HttpResponse = new { code = 400, message = e.Message };
 
                 return BadRequest(objresult);
             }
@@ -94,21 +94,21 @@ namespace FreedomMarketingApi.Controllers
                                  where x.idRoles == model.idRoles
                                  select x).FirstOrDefault();
 
-                if (!String.IsNullOrEmpty(model.Descripcion))
-                    results.Descripcion = model.Descripcion;
+                if (!String.IsNullOrEmpty(model.Description))
+                    results.Description = model.Description;
 
                 db.Entry(results).State = EntityState.Modified;
                 db.SaveChanges();
 
-                objresult.FreedomResponse = new { serviceResponse = true };
+                objresult.FreedomResponse = new { serviceResponse = true, Role = results };
                 objresult.HttpResponse = new { code = 200, message = "Ok" };
 
                 return Ok(objresult);
             }
             catch (Exception e)
             {
-                objresult.FreedomResponse = new { serviceResponse = false };
-                objresult.HttpResponse = new { code = 404, message = e.Message };
+                objresult.FreedomResponse = new { serviceResponse = false, Role = "" };
+                objresult.HttpResponse = new { code = 400, message = e.Message };
 
                 return BadRequest(objresult);
             }
@@ -147,7 +147,7 @@ namespace FreedomMarketingApi.Controllers
             catch (Exception e)
             {
                 objresult.FreedomResponse = new { serviceResponse = false };
-                objresult.HttpResponse = new { code = 404, message = e.Message };
+                objresult.HttpResponse = new { code = 400, message = e.Message };
 
                 return BadRequest(objresult);
             }
@@ -164,7 +164,7 @@ namespace FreedomMarketingApi.Controllers
                 MySqlContext db = new MySqlContext();
 
                 var results = (from x in db.Roles
-                               where !String.IsNullOrEmpty(rol) ? x.Descripcion.Contains(rol) : x.Descripcion.Contains("")
+                               where !String.IsNullOrEmpty(rol) ? x.Description.Contains(rol) : x.Description.Contains("")
                                select x).ToList();
 
                 objresult.FreedomResponse = new { serviceResponse = true, Roles = results };
@@ -175,7 +175,7 @@ namespace FreedomMarketingApi.Controllers
             catch (Exception e)
             {
                 objresult.FreedomResponse = new { serviceResponse = false, Roles = "" };
-                objresult.HttpResponse = new { code = 404, message = e.Message };
+                objresult.HttpResponse = new { code = 400, message = e.Message };
 
                 return BadRequest(objresult);
             }
@@ -187,7 +187,7 @@ namespace FreedomMarketingApi.Controllers
 
         [Route("wscrearusuario")]
         [HttpPost]
-        public async Task<IActionResult> AgregarUsuario(Usuarios model)
+        public async Task<IActionResult> AgregarUsuario(Users model)
         {
             ResponseModel objresult = new ResponseModel();
 
@@ -195,15 +195,15 @@ namespace FreedomMarketingApi.Controllers
             {
                 MySqlContext db = new MySqlContext();
 
-                model.CodigoUsuario = Guid.NewGuid().ToString();
-                model.FechaCreacion = DateTime.UtcNow.AddHours(-5).ToString();
-                model.Puntos = 0;
-                model.CodigoReferencia = "CR" + Guid.NewGuid().ToString();
-                model.Estado = true;
+                model.UserCode = Guid.NewGuid().ToString();
+                model.CreateDate = DateTime.UtcNow.AddHours(-5).ToString();
+                model.Points = 0;
+                model.ReferenceCode = "CR" + Guid.NewGuid().ToString();
+                model.Status = true;
 
                 var codigo = (from x in db.Roles
-                              where x.Descripcion == model.CodigoRol
-                              select x.CodigoRol).FirstOrDefault();
+                              where x.Description == model.RoleCode
+                              select x.RoleCode).FirstOrDefault();
 
                 if (codigo == null)
                 {
@@ -213,12 +213,12 @@ namespace FreedomMarketingApi.Controllers
                     return BadRequest(objresult);
                 }
 
-                model.CodigoRol = codigo;
+                model.RoleCode = codigo;
 
-                db.Usuarios.Add(model);
+                db.Users.Add(model);
                 db.SaveChanges();
 
-                objresult.FreedomResponse = new { serviceResponse = true };
+                objresult.FreedomResponse = new { serviceResponse = true, User = model};
                 objresult.HttpResponse = new { code = 200, message = "Ok" };
 
                 return Ok(objresult);
@@ -226,7 +226,7 @@ namespace FreedomMarketingApi.Controllers
             catch (Exception e)
             {
                 objresult.FreedomResponse = new { serviceResponse = false };
-                objresult.HttpResponse = new { code = 404, message = e.Message };
+                objresult.HttpResponse = new { code = 400, message = e.Message };
 
                 return BadRequest(objresult);
             }
@@ -234,7 +234,7 @@ namespace FreedomMarketingApi.Controllers
 
         [Route("wsmodificarusuario")]
         [HttpPost]
-        public async Task<IActionResult> ModificarUsuario(Usuarios model)
+        public async Task<IActionResult> ModificarUsuario(Users model)
         {
             ResponseModel objresult = new ResponseModel();
 
@@ -242,48 +242,48 @@ namespace FreedomMarketingApi.Controllers
             {
                 MySqlContext db = new MySqlContext();
 
-                Usuarios results = (from x in db.Usuarios
-                                    where x.idUsuarios == model.idUsuarios
+                var results = (from x in db.Users
+                                    where x.idUsers == model.idUsers
                                     select x).FirstOrDefault();
 
-                if (!String.IsNullOrEmpty(model.PrimerNombre))
-                    results.PrimerNombre = model.PrimerNombre;
+                if (!String.IsNullOrEmpty(model.FirstName))
+                    results.FirstName = model.FirstName;
 
-                if (!String.IsNullOrEmpty(model.SegundoNombre))
-                    results.SegundoNombre = model.SegundoNombre;
+                if (!String.IsNullOrEmpty(model.SecondName))
+                    results.SecondName = model.SecondName;
 
-                if (!String.IsNullOrEmpty(model.PrimerApellido))
-                    results.PrimerApellido = model.PrimerApellido;
+                if (!String.IsNullOrEmpty(model.FirstLastName))
+                    results.FirstLastName = model.FirstLastName;
 
-                if (!String.IsNullOrEmpty(model.SegundoApellido))
-                    results.SegundoApellido = model.SegundoApellido;
+                if (!String.IsNullOrEmpty(model.SecondLastName))
+                    results.SecondLastName = model.SecondLastName;
 
-                if (!String.IsNullOrEmpty(model.Identificacion))
-                    results.Identificacion = model.Identificacion;
+                if (!String.IsNullOrEmpty(model.Identification))
+                    results.Identification = model.Identification;
 
-                if (!String.IsNullOrEmpty(model.CorreoElectronico))
-                    results.CorreoElectronico = model.CorreoElectronico;
+                if (!String.IsNullOrEmpty(model.Email))
+                    results.Email = model.Email;
 
-                if (!String.IsNullOrEmpty(model.Telefono))
-                    results.Telefono = model.Telefono;
+                if (!String.IsNullOrEmpty(model.Telephone))
+                    results.Telephone = model.Telephone;
 
-                if (!String.IsNullOrEmpty(model.Direccion))
-                    results.Direccion = model.Direccion;
+                if (!String.IsNullOrEmpty(model.Address))
+                    results.Address = model.Address;
 
-                if (!String.IsNullOrEmpty(model.Pais))
-                    results.Pais = model.Pais;
+                if (!String.IsNullOrEmpty(model.Country))
+                    results.Country = model.Country;
 
-                if (!String.IsNullOrEmpty(model.CodigoReferencia))
-                    results.CodigoReferencia = model.CodigoReferencia;
+                if (!String.IsNullOrEmpty(model.ReferenceCode))
+                    results.ReferenceCode = model.ReferenceCode;
 
-                if (!String.IsNullOrEmpty(model.Puntos.ToString()))
-                    results.Puntos = model.Puntos;
+                if (!String.IsNullOrEmpty(model.Points.ToString()))
+                    results.Points = model.Points;
 
-                if (!String.IsNullOrEmpty(model.CodigoRol))
+                if (!String.IsNullOrEmpty(model.RoleCode))
                 {
                     var codigo = (from x in db.Roles
-                                  where x.Descripcion == model.CodigoRol
-                                  select x.CodigoRol).FirstOrDefault();
+                                  where x.Description == model.RoleCode
+                                  select x.RoleCode).FirstOrDefault();
 
                     if (codigo == null)
                     {
@@ -293,34 +293,34 @@ namespace FreedomMarketingApi.Controllers
                         return BadRequest(objresult);
                     }
 
-                    model.CodigoRol = codigo;
-                    results.CodigoRol = model.CodigoRol;
+                    model.RoleCode = codigo;
+                    results.RoleCode = model.RoleCode;
                 }
 
-                if (!String.IsNullOrEmpty(model.Estado.ToString()))
-                    results.Estado = model.Estado;
+                if (!String.IsNullOrEmpty(model.Status.ToString()))
+                    results.Status = model.Status;
 
-                if (!String.IsNullOrEmpty(model.CuentadePago))
-                    results.CuentadePago = model.CuentadePago;
+                if (!String.IsNullOrEmpty(model.PaymentAccount))
+                    results.PaymentAccount = model.PaymentAccount;
 
-                if (!String.IsNullOrEmpty(model.Contraseña))
-                    results.Contraseña = model.Contraseña;
+                if (!String.IsNullOrEmpty(model.Password))
+                    results.Password = model.Password;
 
-                if (!String.IsNullOrEmpty(model.CorreoMasivo.ToString()))
-                    results.CorreoMasivo = model.CorreoMasivo;
+                if (!String.IsNullOrEmpty(model.MassiveMail.ToString()))
+                    results.MassiveMail = model.MassiveMail;
 
                 db.Entry(results).State = EntityState.Modified;
                 db.SaveChanges();
 
-                objresult.FreedomResponse = new { serviceResponse = true };
+                objresult.FreedomResponse = new { serviceResponse = true, User = results };
                 objresult.HttpResponse = new { code = 200, message = "Ok" };
 
                 return Ok(objresult);
             }
             catch (Exception e)
             {
-                objresult.FreedomResponse = new { serviceResponse = false };
-                objresult.HttpResponse = new { code = 404, message = e.Message };
+                objresult.FreedomResponse = new { serviceResponse = false, User = "" };
+                objresult.HttpResponse = new { code = 400, message = e.Message };
 
                 return BadRequest(objresult);
             }
@@ -336,8 +336,8 @@ namespace FreedomMarketingApi.Controllers
             {
                 MySqlContext db = new MySqlContext();
 
-                var results = (from x in db.Usuarios
-                               where x.idUsuarios == id
+                var results = (from x in db.Users
+                               where x.idUsers == id
                                select x).FirstOrDefault();
 
                 if (results == null)
@@ -348,7 +348,7 @@ namespace FreedomMarketingApi.Controllers
                     return NotFound(objresult);
                 }
 
-                db.Usuarios.Remove(results);
+                db.Users.Remove(results);
                 db.SaveChanges();
 
                 objresult.FreedomResponse = new { serviceResponse = true };
@@ -358,8 +358,8 @@ namespace FreedomMarketingApi.Controllers
             }
             catch (Exception e)
             {
-                objresult.FreedomResponse = new { serviceResponse = false };
-                objresult.HttpResponse = new { code = 404, message = e.Message };
+                objresult.FreedomResponse = new { serviceResponse = false, User = "" };
+                objresult.HttpResponse = new { code = 400, message = e.Message };
 
                 return BadRequest(objresult);
             }
@@ -375,19 +375,19 @@ namespace FreedomMarketingApi.Controllers
             {
                 MySqlContext db = new MySqlContext();
 
-                var results = (from x in db.Usuarios
-                               where !String.IsNullOrEmpty(usuario) ? x.CorreoElectronico.Contains(usuario) : x.CorreoElectronico.Contains("")
+                var results = (from x in db.Users
+                               where !String.IsNullOrEmpty(usuario) ? x.Email.Contains(usuario) : x.Email.Contains("")
                                select x).ToList();
 
-                objresult.FreedomResponse = new { serviceResponse = true, Roles = results };
+                objresult.FreedomResponse = new { serviceResponse = true, User = results };
                 objresult.HttpResponse = new { code = 200, message = "Ok" };
 
                 return Ok(objresult);
             }
             catch (Exception e)
             {
-                objresult.FreedomResponse = new { serviceResponse = false, Roles = "" };
-                objresult.HttpResponse = new { code = 404, message = e.Message };
+                objresult.FreedomResponse = new { serviceResponse = false, User = "" };
+                objresult.HttpResponse = new { code = 400, message = e.Message };
 
                 return BadRequest(objresult);
             }
