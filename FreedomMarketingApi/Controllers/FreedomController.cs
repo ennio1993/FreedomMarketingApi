@@ -64,6 +64,7 @@ namespace FreedomMarketingApi.Controllers
 
                 model.RoleCode = Guid.NewGuid().ToString();
                 model.CreateDate = DateTime.UtcNow.AddHours(-5).ToString();
+                model.LastModifiedDate = null;
 
                 db.Roles.Add(model);
                 db.SaveChanges();
@@ -98,6 +99,8 @@ namespace FreedomMarketingApi.Controllers
 
                 if (!String.IsNullOrEmpty(model.Description))
                     results.Description = model.Description;
+
+                results.LastModifiedDate = DateTime.UtcNow.AddHours(-5).ToString();
 
                 db.Entry(results).State = EntityState.Modified;
                 db.SaveChanges();
@@ -207,6 +210,7 @@ namespace FreedomMarketingApi.Controllers
                 model.MassiveMail = false;
                 model.RoleCode = "eb3bd4c7-c621-432a-8066-3be8314b7fc2";
                 model.PaymentId = null;
+                model.LastModifiedDate = null;
 
                 db.Users.Add(model);
                 db.SaveChanges();
@@ -300,6 +304,8 @@ namespace FreedomMarketingApi.Controllers
 
                 if (!String.IsNullOrEmpty(model.MassiveMail.ToString()))
                     results.MassiveMail = model.MassiveMail;
+
+                results.LastModifiedDate = DateTime.UtcNow.AddHours(-5).ToString();
 
                 db.Entry(results).State = EntityState.Modified;
                 db.SaveChanges();

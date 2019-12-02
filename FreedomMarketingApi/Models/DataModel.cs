@@ -15,6 +15,7 @@ namespace FreedomMarketingApi.Models
             public string Description { get; set; }
             public string CreateDate { get; set; }
             public string RoleCode { get; set; }
+            public string LastModifiedDate { get; set; }
         }
         public class Users
         {
@@ -36,6 +37,7 @@ namespace FreedomMarketingApi.Models
             public string CreateDate { get; set; }
             public string Password { get; set; }
             public bool MassiveMail { get; set; }
+            public string LastModifiedDate { get; set; }
         }
         public class Payment
         {
@@ -43,6 +45,7 @@ namespace FreedomMarketingApi.Models
             public int PaymentId { get; set; }
             public string PaymentSlip { get; set; }
             public string PaymentDate { get; set; }
+            public string CreateDate { get; set; }
         }
         public class ResponseModel
         {
