@@ -14,5 +14,9 @@ namespace FreedomMarketingApi.Helpers
             string referenceCode = "F" + numbers + "M";
             return referenceCode;
         }
+        public string LocalDateTime()
+        {
+            return DateTime.UtcNow.AddHours(-5).ToString("MM/dd/yyyy h:mm tt");
+        }
     }
 }
