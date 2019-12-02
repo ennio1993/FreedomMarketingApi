@@ -29,25 +29,6 @@ namespace FreedomMarketingApi.Controllers
         public FreedomController(IConfiguration configuration)
         {
             _config = configuration;
-            //_httpContext = accessor;
-
-            //var accessToken = _httpContext.HttpContext.Request.Headers["Authorization"].ToString();
-
-            //if (accessToken != null)
-            //{
-            //    if (accessToken.StartsWith("Bearer ") || accessToken.Contains("Bearer "))
-            //    {
-            //        _token = accessToken.Substring("Bearer ".Length).Trim();
-            //    }
-            //    else
-            //    {
-            //        throw new UnauthorizedAccessException("Invalid Token");
-            //    }
-            //}
-            //else
-            //{
-            //    throw new UnauthorizedAccessException("Invalid Token");
-            //}
         }
 
         #region Roles
