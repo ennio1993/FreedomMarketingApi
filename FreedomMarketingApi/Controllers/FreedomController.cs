@@ -190,13 +190,13 @@ namespace FreedomMarketingApi.Controllers
                 JwtManager jwt = new JwtManager(_config);
 
                 var validateUser = (from x in db.Users
-                                    where x.Email == model.Email
+                                    where x.Email == model.Email || x.Identification == model.Identification
                                     select x).FirstOrDefault();
 
                 if(validateUser != null)
                 {
                     objresult.FreedomResponse = new { serviceResponse = false, User = "", token = "" };
-                    objresult.HttpResponse = new { code = 400, message = "El correo ingresado, ya esta utilizado" };
+                    objresult.HttpResponse = new { code = 400, message = "El correo/identificacion ingresado, ya esta siendo utilizado" };
 
                     return BadRequest(objresult);
                 }
@@ -411,33 +411,32 @@ namespace FreedomMarketingApi.Controllers
                 MySqlContext db = new MySqlContext();
                 DataManagement management = new DataManagement();
                 Payment payment = new Payment();
-                Users data = new Users();
 
-                var date = management.LocalDateTime();
+                var date = DateTime.Parse(model.PaymentDate).ToString("MM/dd/yyyy h:mm tt");
 
                 payment.PaymentDate = date;
-                payment.CreateDate = DateTime.UtcNow.AddHours(-5).ToString();
+                payment.CreateDate = management.LocalDateTime();
                 payment.PaymentSlip = model.PaymentSlip;
 
                 db.Payment.Add(payment);
                 db.SaveChanges();
 
-                data.PaymentId = model.PaymentId.ToString();
-
-                var match = (from x in db.Users
+                var data = (from x in db.Users
                              where x.Identification == model.Identification
                              select x).FirstOrDefault();
 
-                if(match != null)
+                data.PaymentId = payment.PaymentId.ToString();
+
+                if (data != null)
                 {
-                    if(match.UserCode == match.ReferenceCode) 
-                        data.Points = match.Points + 1;
+                    if(data.UserCode == data.ReferenceCode) 
+                        data.Points = data.Points + 1;
                 }
 
                 db.Entry(data).State = EntityState.Modified;
                 db.SaveChanges();
 
-                objresult.FreedomResponse = new { serviceResponse = true, Payment = model };
+                objresult.FreedomResponse = new { serviceResponse = true, Payment = payment };
                 objresult.HttpResponse = new { code = 200, message = "Ok" };
 
                 return Ok(objresult);
