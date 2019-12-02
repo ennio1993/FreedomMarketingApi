@@ -63,7 +63,7 @@ namespace FreedomMarketingApi.Controllers
                 MySqlContext db = new MySqlContext();
 
                 model.RoleCode = Guid.NewGuid().ToString();
-                model.CreateDate = DateTime.UtcNow.AddHours(-5).ToString("YYYY-DD-MM HH:MM:SS");
+                model.CreateDate = DateTime.UtcNow.AddHours(-5).ToString("MM/dd/yyyy h:mm tt");
                 model.LastModifiedDate = null;
 
                 db.Roles.Add(model);
@@ -101,7 +101,7 @@ namespace FreedomMarketingApi.Controllers
                 if (!String.IsNullOrEmpty(model.Description))
                     results.Description = model.Description;
 
-                results.LastModifiedDate = DateTime.UtcNow.AddHours(-5).ToString("YYYY-DD-MM HH:MM:SS");
+                results.LastModifiedDate = DateTime.UtcNow.AddHours(-5).ToString("MM/dd/yyyy h:mm tt");
 
                 db.Entry(results).State = EntityState.Modified;
                 db.SaveChanges();
@@ -207,7 +207,7 @@ namespace FreedomMarketingApi.Controllers
                 JwtManager jwt = new JwtManager(_config);
 
                 model.UserCode = management.CreateReferenceCode();
-                model.CreateDate = DateTime.UtcNow.AddHours(-5).ToString("YYYY-DD-MM HH:MM:SS");
+                model.CreateDate = DateTime.UtcNow.AddHours(-5).ToString("MM/dd/yyyy h:mm tt");
                 model.Points = 0;
                 model.ReferenceCode = model.ReferenceCode;
                 model.Status = false;
@@ -310,7 +310,7 @@ namespace FreedomMarketingApi.Controllers
                 if (!String.IsNullOrEmpty(model.MassiveMail.ToString()))
                     results.MassiveMail = model.MassiveMail;
 
-                results.LastModifiedDate = DateTime.UtcNow.AddHours(-5).ToString("YYYY-DD-MM HH:MM:SS");
+                results.LastModifiedDate = DateTime.UtcNow.AddHours(-5).ToString("MM/dd/yyyy h:mm tt");
 
                 db.Entry(results).State = EntityState.Modified;
                 db.SaveChanges();
@@ -416,7 +416,7 @@ namespace FreedomMarketingApi.Controllers
                 Payment payment = new Payment();
                 Users data = new Users();
 
-                var date = Convert.ToDateTime(model.PaymentDate).ToString("YYYY-DD-MM HH:MM:SS");
+                var date = Convert.ToDateTime(model.PaymentDate).ToString("MM/dd/yyyy h:mm tt");
 
                 payment.PaymentDate = date;
                 payment.CreateDate = DateTime.UtcNow.AddHours(-5).ToString();
