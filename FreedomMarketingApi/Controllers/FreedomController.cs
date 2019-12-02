@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using FreedomMarketingApi.Helpers;
+using FreedomMarketingApi.Models;
 using FreedomMarketingApi.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -194,31 +196,30 @@ namespace FreedomMarketingApi.Controllers
             try
             {
                 MySqlContext db = new MySqlContext();
+                DataManagement management = new DataManagement();
+                LoginResponse newResponse = new LoginResponse();
 
                 model.UserCode = Guid.NewGuid().ToString();
                 model.CreateDate = DateTime.UtcNow.AddHours(-5).ToString();
                 model.Points = 0;
-                model.ReferenceCode = "CR" + Guid.NewGuid().ToString();
-                model.Status = true;
-
-                var codigo = (from x in db.Roles
-                              where x.Description == model.RoleCode
-                              select x.RoleCode).FirstOrDefault();
-
-                if (codigo == null)
-                {
-                    objresult.FreedomResponse = new { serviceResponse = false };
-                    objresult.HttpResponse = new { code = 400, message = "El rol ingresado no existe en la base de datos" };
-
-                    return BadRequest(objresult);
-                }
-
-                model.RoleCode = codigo;
+                model.ReferenceCode = management.CreateReferenceCode();
+                model.Status = false;
+                model.MassiveMail = false;
+                model.RoleCode = "eb3bd4c7-c621-432a-8066-3be8314b7fc2";
+                model.PaymentId = null;
 
                 db.Users.Add(model);
                 db.SaveChanges();
 
-                objresult.FreedomResponse = new { serviceResponse = true, User = model};
+                var codigo = (from x in db.Roles
+                              where x.RoleCode == model.RoleCode
+                              select x.Description).FirstOrDefault();
+
+                newResponse.Email = model.Email;
+                newResponse.Role = codigo;
+                newResponse.FullName = model.FirstName + " " + model.LastName;
+
+                objresult.FreedomResponse = new { serviceResponse = true, User = newResponse};
                 objresult.HttpResponse = new { code = 200, message = "Ok" };
 
                 return Ok(objresult);
@@ -249,14 +250,8 @@ namespace FreedomMarketingApi.Controllers
                 if (!String.IsNullOrEmpty(model.FirstName))
                     results.FirstName = model.FirstName;
 
-                if (!String.IsNullOrEmpty(model.SecondName))
-                    results.SecondName = model.SecondName;
-
-                if (!String.IsNullOrEmpty(model.FirstLastName))
-                    results.FirstLastName = model.FirstLastName;
-
-                if (!String.IsNullOrEmpty(model.SecondLastName))
-                    results.SecondLastName = model.SecondLastName;
+                if (!String.IsNullOrEmpty(model.LastName))
+                    results.LastName = model.LastName;
 
                 if (!String.IsNullOrEmpty(model.Identification))
                     results.Identification = model.Identification;
@@ -299,9 +294,6 @@ namespace FreedomMarketingApi.Controllers
 
                 if (!String.IsNullOrEmpty(model.Status.ToString()))
                     results.Status = model.Status;
-
-                if (!String.IsNullOrEmpty(model.PaymentAccount))
-                    results.PaymentAccount = model.PaymentAccount;
 
                 if (!String.IsNullOrEmpty(model.Password))
                     results.Password = model.Password;
@@ -387,6 +379,48 @@ namespace FreedomMarketingApi.Controllers
             catch (Exception e)
             {
                 objresult.FreedomResponse = new { serviceResponse = false, User = "" };
+                objresult.HttpResponse = new { code = 400, message = e.Message };
+
+                return BadRequest(objresult);
+            }
+        }
+
+        #endregion
+
+        #region Payments
+
+        [Route("wscrearpago")]
+        [HttpPost]
+        public async Task<IActionResult> CrearPago(Payment model)
+        {
+            ResponseModel objresult = new ResponseModel();
+
+            try
+            {
+                MySqlContext db = new MySqlContext();
+                DataManagement management = new DataManagement();
+                Users data = new Users();
+
+                var date = Convert.ToDateTime(model.PaymentDate).ToString("YYYY-DD-MM HH:MM:SS");
+
+                model.PaymentDate = date;
+
+                db.Payment.Add(model);
+                db.SaveChanges();
+
+                data.PaymentId = model.PaymentId.ToString();
+
+                db.Entry(data).State = EntityState.Modified;
+                db.SaveChanges();
+
+                objresult.FreedomResponse = new { serviceResponse = true, Payment = model };
+                objresult.HttpResponse = new { code = 200, message = "Ok" };
+
+                return Ok(objresult);
+            }
+            catch (Exception e)
+            {
+                objresult.FreedomResponse = new { serviceResponse = false };
                 objresult.HttpResponse = new { code = 400, message = e.Message };
 
                 return BadRequest(objresult);

@@ -22,9 +22,7 @@ namespace FreedomMarketingApi.Models
             public int idUsers { get; set; }
             public string UserCode { get; set; }
             public string FirstName { get; set; }
-            public string SecondName { get; set; }
-            public string FirstLastName { get; set; }
-            public string SecondLastName { get; set; }
+            public string LastName { get; set; }
             public string Identification { get; set; }
             public string Email { get; set; }
             public string Telephone { get; set; }
@@ -34,10 +32,17 @@ namespace FreedomMarketingApi.Models
             public int Points { get; set; }
             public string RoleCode { get; set; }
             public bool Status { get; set; }
-            public string PaymentAccount { get; set; }
+            public string PaymentId { get; set; }
             public string CreateDate { get; set; }
             public string Password { get; set; }
             public bool MassiveMail { get; set; }
+        }
+        public class Payment
+        {
+            [Key]
+            public int PaymentId { get; set; }
+            public string PaymentSlip { get; set; }
+            public string PaymentDate { get; set; }
         }
         public class ResponseModel
         {

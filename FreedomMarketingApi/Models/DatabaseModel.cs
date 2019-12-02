@@ -21,6 +21,7 @@ namespace FreedomMarketingApi.Models
             }
             public DbSet<Roles> Roles { get; set; }
             public DbSet<Users> Users { get; set; }
+            public DbSet<Payment> Payment { get; set; }
         }
     }
 }

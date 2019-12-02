@@ -45,7 +45,7 @@ namespace FreedomMarketingApi.Controllers
                 }
 
                 login.Email = results.Email;
-                login.FullName = results.FirstName + " " + results.FirstLastName;
+                login.FullName = results.FirstName + " " + results.LastName;
 
                 var codigo = (from x in db.Roles
                               where x.RoleCode == results.RoleCode
