@@ -19,7 +19,6 @@ using static FreedomMarketingApi.Models.DataModel;
 namespace FreedomMarketingApi.Controllers
 {
     //[Route("api/[controller]")]
-    [Authorize]
     [ApiController]
     public class FreedomController : ControllerBase
     {
@@ -49,10 +48,11 @@ namespace FreedomMarketingApi.Controllers
             {
                 throw new UnauthorizedAccessException("Invalid Token");
             }
-        }    
+        }
 
         #region Roles
 
+        [Authorize]
         [Route("wscrearrol")]
         [HttpPost]
         public async Task<IActionResult> AgregarRoles(Roles model)
@@ -83,6 +83,7 @@ namespace FreedomMarketingApi.Controllers
             }
         }
 
+        [Authorize]
         [Route("wsmodificarrol")]
         [HttpPost]
         public async Task<IActionResult> ModificarRoles(Roles model)
@@ -119,6 +120,7 @@ namespace FreedomMarketingApi.Controllers
             }
         }
 
+        [Authorize]
         [Route("wseliminarrol")]
         [HttpDelete]
         public async Task<IActionResult> EliminarRoles(int? rol = null)
@@ -158,6 +160,7 @@ namespace FreedomMarketingApi.Controllers
             }
         }
 
+        [Authorize]
         [Route("wslistarrol")]
         [HttpGet]
         public async Task<IActionResult> ListarRoles(string rol = null)
@@ -201,6 +204,7 @@ namespace FreedomMarketingApi.Controllers
                 MySqlContext db = new MySqlContext();
                 DataManagement management = new DataManagement();
                 LoginResponse newResponse = new LoginResponse();
+                JwtManager jwt = new JwtManager(_config);
 
                 model.UserCode = Guid.NewGuid().ToString();
                 model.CreateDate = DateTime.UtcNow.AddHours(-5).ToString();
@@ -223,20 +227,21 @@ namespace FreedomMarketingApi.Controllers
                 newResponse.Role = codigo;
                 newResponse.FullName = model.FirstName + " " + model.LastName;
 
-                objresult.FreedomResponse = new { serviceResponse = true, User = newResponse};
+                objresult.FreedomResponse = new { serviceResponse = true, User = newResponse, token = jwt.GenerateCode(newResponse.Email, newResponse.Role, newResponse.FullName) };
                 objresult.HttpResponse = new { code = 200, message = "Ok" };
 
                 return Ok(objresult);
             }
             catch (Exception e)
             {
-                objresult.FreedomResponse = new { serviceResponse = false };
+                objresult.FreedomResponse = new { serviceResponse = false, User = "", token = "" };
                 objresult.HttpResponse = new { code = 400, message = e.Message };
 
                 return BadRequest(objresult);
             }
         }
 
+        [Authorize]
         [Route("wsmodificarusuario")]
         [HttpPost]
         public async Task<IActionResult> ModificarUsuario(Users model)
@@ -324,6 +329,7 @@ namespace FreedomMarketingApi.Controllers
             }
         }
 
+        [Authorize]
         [Route("wseliminarusuario")]
         [HttpDelete]
         public async Task<IActionResult> EliminarUsuario(int? id = null)
@@ -363,6 +369,7 @@ namespace FreedomMarketingApi.Controllers
             }
         }
 
+        [Authorize]
         [Route("wslistarusuarios")]
         [HttpGet]
         public async Task<IActionResult> ListarUsuarios(string usuario = null)
@@ -395,6 +402,7 @@ namespace FreedomMarketingApi.Controllers
 
         #region Payments
 
+        [Authorize]
         [Route("wscrearpago")]
         [HttpPost]
         public async Task<IActionResult> CrearPago(PaymentModel model)
