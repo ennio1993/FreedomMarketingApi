@@ -425,16 +425,23 @@ namespace FreedomMarketingApi.Controllers
                              where x.Identification == model.Identification
                              select x).FirstOrDefault();
 
-                data.PaymentId = payment.PaymentId.ToString();
-
                 if (data != null)
                 {
-                    if(data.UserCode == data.ReferenceCode) 
-                        data.Points = data.Points + 1;
-                }
+                    data.PaymentId = payment.PaymentId.ToString();
 
-                db.Entry(data).State = EntityState.Modified;
-                db.SaveChanges();
+                    if (data.UserCode == data.ReferenceCode) 
+                        data.Points = data.Points + 1;
+
+                    db.Entry(data).State = EntityState.Modified;
+                    db.SaveChanges();
+                }       
+                else
+                {
+                    objresult.FreedomResponse = new { serviceResponse = false, Payment = "" };
+                    objresult.HttpResponse = new { code = 400, message = "El usuario no se encuentra registrado." };
+
+                    return BadRequest(objresult);
+                }
 
                 objresult.FreedomResponse = new { serviceResponse = true, Payment = payment };
                 objresult.HttpResponse = new { code = 200, message = "Ok" };
