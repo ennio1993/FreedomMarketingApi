@@ -397,7 +397,7 @@ namespace FreedomMarketingApi.Controllers
 
         [Route("wscrearpago")]
         [HttpPost]
-        public async Task<IActionResult> CrearPago(Payment model)
+        public async Task<IActionResult> CrearPago(PaymentModel model)
         {
             ResponseModel objresult = new ResponseModel();
 
@@ -405,16 +405,28 @@ namespace FreedomMarketingApi.Controllers
             {
                 MySqlContext db = new MySqlContext();
                 DataManagement management = new DataManagement();
+                Payment payment = new Payment();
                 Users data = new Users();
 
                 var date = Convert.ToDateTime(model.PaymentDate).ToString("YYYY-DD-MM HH:MM:SS");
 
-                model.PaymentDate = date;
+                payment.PaymentDate = date;
+                payment.CreateDate = DateTime.UtcNow.AddHours(-5).ToString();
+                payment.PaymentSlip = model.PaymentSlip;
 
-                db.Payment.Add(model);
+                db.Payment.Add(payment);
                 db.SaveChanges();
 
                 data.PaymentId = model.PaymentId.ToString();
+
+                var referenceCode = (from x in db.Users
+                                     where x.Identification == model.Identification
+                                     select x).FirstOrDefault();
+
+                if(referenceCode != null)
+                {
+                    data.Points = referenceCode.Points + 1;
+                }
 
                 db.Entry(data).State = EntityState.Modified;
                 db.SaveChanges();

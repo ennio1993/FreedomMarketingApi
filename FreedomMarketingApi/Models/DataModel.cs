@@ -64,5 +64,13 @@ namespace FreedomMarketingApi.Models
             public string Name { get; set; }
             public string Role { get; set; }
         }
+        public class PaymentModel
+        {
+            public int PaymentId { get; set; }
+            public string PaymentSlip { get; set; }
+            public string PaymentDate { get; set; }
+            public string CreateDate { get; set; }
+            public string Identification { get; set; }
+        }
     }
 }
