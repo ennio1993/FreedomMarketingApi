@@ -208,6 +208,18 @@ namespace FreedomMarketingApi.Controllers
                 LoginResponse newResponse = new LoginResponse();
                 JwtManager jwt = new JwtManager(_config);
 
+                var validateUser = (from x in db.Users
+                                    where x.Email == model.Email
+                                    select x).FirstOrDefault();
+
+                if(validateUser != null)
+                {
+                    objresult.FreedomResponse = new { serviceResponse = false, User = "", token = "" };
+                    objresult.HttpResponse = new { code = 400, message = "El correo ingresado, ya esta utilizado" };
+
+                    return BadRequest(objresult);
+                }
+
                 model.UserCode = management.CreateReferenceCode();
                 model.CreateDate = management.LocalDateTime();
                 model.Points = 0;

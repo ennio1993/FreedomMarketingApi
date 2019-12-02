@@ -16,7 +16,7 @@ namespace FreedomMarketingApi.Helpers
         }
         public string LocalDateTime()
         {
-            return DateTime.UtcNow.AddHours(-5).ToString("MM/dd/yyyy h:mm tt");
+            return TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time")).ToString();
         }
     }
 }
