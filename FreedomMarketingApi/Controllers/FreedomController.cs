@@ -221,6 +221,7 @@ namespace FreedomMarketingApi.Controllers
                 newResponse.Email = model.Email;
                 newResponse.Role = codigo;
                 newResponse.FullName = model.FirstName + " " + model.LastName;
+                newResponse.Status = model.Status;
 
                 objresult.FreedomResponse = new { serviceResponse = true, User = newResponse, token = jwt.GenerateCode(newResponse.Email, newResponse.Role, newResponse.FullName) };
                 objresult.HttpResponse = new { code = 200, message = "Ok" };
