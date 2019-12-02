@@ -206,10 +206,10 @@ namespace FreedomMarketingApi.Controllers
                 LoginResponse newResponse = new LoginResponse();
                 JwtManager jwt = new JwtManager(_config);
 
-                model.UserCode = Guid.NewGuid().ToString();
+                model.UserCode = management.CreateReferenceCode();
                 model.CreateDate = DateTime.UtcNow.AddHours(-5).ToString();
                 model.Points = 0;
-                model.ReferenceCode = management.CreateReferenceCode();
+                model.ReferenceCode = model.ReferenceCode;
                 model.Status = false;
                 model.MassiveMail = false;
                 model.RoleCode = "eb3bd4c7-c621-432a-8066-3be8314b7fc2";
@@ -427,13 +427,14 @@ namespace FreedomMarketingApi.Controllers
 
                 data.PaymentId = model.PaymentId.ToString();
 
-                var referenceCode = (from x in db.Users
-                                     where x.Identification == model.Identification
-                                     select x).FirstOrDefault();
+                var match = (from x in db.Users
+                             where x.Identification == model.Identification
+                             select x).FirstOrDefault();
 
-                if(referenceCode != null)
+                if(match != null)
                 {
-                    data.Points = referenceCode.Points + 1;
+                    if(match.UserCode == match.ReferenceCode) 
+                        data.Points = match.Points + 1;
                 }
 
                 db.Entry(data).State = EntityState.Modified;
